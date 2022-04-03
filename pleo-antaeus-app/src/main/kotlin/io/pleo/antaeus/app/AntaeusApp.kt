@@ -8,6 +8,7 @@
 package io.pleo.antaeus.app
 
 import getPaymentProvider
+import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
@@ -24,6 +25,8 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import setupInitialData
 import java.io.File
 import java.sql.Connection
+import kotlinx.coroutines.*
+import java.time.LocalDate
 
 fun main() {
     // The tables to create in the database.
@@ -61,11 +64,23 @@ fun main() {
     val customerService = CustomerService(dal = dal)
 
     // This is _your_ billing service to be included where you see fit
-    val billingService = BillingService(paymentProvider = paymentProvider)
+    val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService, customerService=customerService, dal=dal)
+
+    GlobalScope.launch{
+        while(true){
+            delay(10000L)
+//            if (LocalDate.now().dayOfMonth == 1){
+//                billingService.chargeInvoices()
+//            }
+            billingService.chargeInvoices()
+
+        }
+    }
 
     // Create REST web service
     AntaeusRest(
         invoiceService = invoiceService,
-        customerService = customerService
+        customerService = customerService,
+        billingService = billingService
     ).run()
 }
