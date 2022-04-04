@@ -11,7 +11,6 @@ package io.pleo.antaeus.core.external
 
 import io.pleo.antaeus.core.exceptions.CurrencyMismatchException
 import io.pleo.antaeus.core.exceptions.NetworkException
-import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.models.Customer
 import io.pleo.antaeus.models.Invoice
 import mu.KLogger
@@ -29,10 +28,8 @@ interface PaymentProvider {
           `CurrencyMismatchException`: when the currency does not match the customer account.
           `NetworkException`: when a network error happens.
      */
-    private val log: KLogger
+    private val log: KLogger //used logging here to track exceptions
         get() = KotlinLogging.logger {}
-
-
 
     fun charge(invoice: Invoice, customer: Customer): Boolean {
         if (customer.currency != invoice.amount.currency) {
@@ -40,9 +37,10 @@ interface PaymentProvider {
             throw CurrencyMismatchException(invoice.id, customer.id)
         }
         if (Random.nextInt(1, 11) == 10){
+            log.error ("Network Exception. Payment wasn't successful") // there can be a retry mechanism here, left as to-do
             throw NetworkException()
         }
-        return Random.nextInt(1, 11) == 9
+        return Random.nextInt(1, 6) == 2
 
     }
 }

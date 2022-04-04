@@ -13,7 +13,6 @@ import io.pleo.antaeus.core.services.InvoiceService
 import mu.KotlinLogging
 
 private val logger = KotlinLogging.logger {}
-private val thisFile: () -> Unit = {}
 
 class AntaeusRest(
     private val invoiceService: InvoiceService,
@@ -62,6 +61,7 @@ class AntaeusRest(
                             it.json(invoiceService.fetchAll())
                         }
                         //URL: /rest/v1/invoices/pending
+                        //should take "pending" as a query parameter but I left it like this since it will be only used for testing
                         path ("pending"){
                             get {
                                 it.json(invoiceService.fetchPending())

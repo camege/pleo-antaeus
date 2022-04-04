@@ -8,7 +8,6 @@
 package io.pleo.antaeus.app
 
 import getPaymentProvider
-import io.pleo.antaeus.core.external.PaymentProvider
 import io.pleo.antaeus.core.services.BillingService
 import io.pleo.antaeus.core.services.CustomerService
 import io.pleo.antaeus.core.services.InvoiceService
@@ -64,18 +63,22 @@ fun main() {
     val customerService = CustomerService(dal = dal)
 
     // This is _your_ billing service to be included where you see fit
-    val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService, customerService=customerService, dal=dal)
+    val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService, customerService=customerService)
 
-//    GlobalScope.launch{
-//        while(true){
-//            delay(10000L)
-////            if (LocalDate.now().dayOfMonth == 1){
-////                billingService.chargeInvoices()
-////            }
-//            billingService.chargeInvoices()
-//
-//        }
-//    }
+
+    //coroutine to work forever and check if it is the 1st of the month, if yes, charge pending invoices and return errors as logs
+    GlobalScope.launch{
+        while(true){
+            //delay(10000L)
+            //testing
+            delay(86400000L)
+            if (LocalDate.now().dayOfMonth == 1){
+                billingService.chargeInvoices()
+            }
+            //billingService.chargeInvoices()
+
+        }
+    }
 
     // Create REST web service
     AntaeusRest(

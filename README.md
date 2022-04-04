@@ -86,3 +86,25 @@ The code given is structured as follows. Feel free however to modify the structu
 * [Sqlite3](https://sqlite.org/index.html) - Database storage engine
 
 Happy hacking 😁!
+
+################
+
+Before I started, I mainly divided the project into couple tasks:
+* Clone, build and run the project (Kotlin and Docker were pretty new for me, I needed some time to research and understand)
+* Develop two new endpoints: fetch pending invoices and charge to do tasks with API requests. I mainly used Flask for the past three years, therefore felt strong developing new endpoints to solve the request as a first phase.
+* Understand how "PaymentProvider" works & Why it is an interface but not a class & delete the overridden "charge" function and develop my own with exception handling.
+* Write a test for currency mismatch, other exceptions implemented in the code.
+* Decide on a scheduling mechanism that will either:
+  * Get all the pending invoices on a frequency, turn them into jobs, check what day is it, and schedule them for the 1st of the coming month
+  * Check which day is it, look for the first of the month, charge all invoices if it is the 1st of the month.
+* Think about a solution on failed payments (retry, inform, etc.)
+
+I've pretty much achieved all the steps in this plan and decided to go with the latter option on scheduling, mainly because of a single reason. It was very easy to implement. After researching for a time on schedules, threads and performance, I am pretty sure that initializing a schedule globally will create memory leaks and performance related issues. Considering that, I still have some pain points I want to tackle or improve:
+* Left the REST routes that I've developed during the first phase without any iteration, simply they were to be used for testing.
+* There is only a test for currency mismatch scenario but there can be more tests depending on how "charge" function works. 
+* Didn't implement a scenario for network failure. There can be a retry mechanism to take the payment if network exception occurs.
+* Added utils.kt to test folder under core, just to be able to use getPaymentProvider() func as a constructor. Again, it can be easily solved by making PaymentProvider interface a class, but I wasn't sure since PaymentProvider is an external service and will be used as an external service.
+* A better way to schedule pending invoices to be charged. I still need some time to understand push functions into cronjobs and schedule them.
+
+
+
