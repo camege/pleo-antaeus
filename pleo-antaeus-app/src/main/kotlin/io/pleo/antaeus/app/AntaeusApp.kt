@@ -66,16 +66,16 @@ fun main() {
     // This is _your_ billing service to be included where you see fit
     val billingService = BillingService(paymentProvider = paymentProvider, invoiceService = invoiceService, customerService=customerService, dal=dal)
 
-    GlobalScope.launch{
-        while(true){
-            delay(10000L)
-//            if (LocalDate.now().dayOfMonth == 1){
-//                billingService.chargeInvoices()
-//            }
-            billingService.chargeInvoices()
-
-        }
-    }
+//    GlobalScope.launch{
+//        while(true){
+//            delay(10000L)
+////            if (LocalDate.now().dayOfMonth == 1){
+////                billingService.chargeInvoices()
+////            }
+//            billingService.chargeInvoices()
+//
+//        }
+//    }
 
     // Create REST web service
     AntaeusRest(
